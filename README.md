@@ -5,13 +5,13 @@ provides random access functionality to retrieve articles and their associated m
 compilations, as well as searching of titles in the ZIM file (by prefix), and retrieval of random
 titles.
 
-### Include in your project
+## Include in your project
 
 Add the following to your build.gradle:
 
 `compile 'com.dmitrybrant:zimdroid:0.0.5'`
 
-### Basic usage
+## Basic usage
 
 The class `ZIMReader` contains all the functions necessary for parsing and extracting content from
 a `ZIMFile`. It can be used like this:
@@ -25,7 +25,7 @@ String html = reader.getHtmlForTitle(randomTitle);
 
 ...and so on.
 
-### Uploading to Bintray
+## Uploading to Bintray
 
 (For my own reference, and sanity)
 
@@ -42,3 +42,19 @@ root directory of the project:
 bintray.user=<your username on bintray>
 bintray.apikey=<your API key from bintray>
 ```
+
+## License
+
+Copyright 2017 Dmitry Brant
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
