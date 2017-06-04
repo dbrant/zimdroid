@@ -95,7 +95,7 @@ public class ZIMReader implements Closeable {
         for (int i = 0; i < maxResults; i++) {
             entry = getDirectoryEntryAtTitlePosition(index);
 
-            if (entry.getTitle().toLowerCase(Locale.ROOT).startsWith(prefix)) {
+            if (entry.getTitle().startsWith(prefix)) {
                 results.add(entry.getTitle());
             }
 

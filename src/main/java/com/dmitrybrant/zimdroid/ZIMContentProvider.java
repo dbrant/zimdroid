@@ -21,7 +21,7 @@ public abstract class ZIMContentProvider extends ContentProvider {
 
     protected abstract Uri getContentUri();
 
-    protected abstract ByteArrayOutputStream getDataForUrl(String url);
+    protected abstract ByteArrayOutputStream getDataForUrl(String url) throws IOException;
 
     @Override
     public String getType(Uri uri) {
