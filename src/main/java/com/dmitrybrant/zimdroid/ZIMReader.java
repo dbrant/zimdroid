@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -80,7 +81,7 @@ public class ZIMReader implements Closeable {
         List<String> results = new ArrayList<>();
         // artificially capitalize the first character of the prefix
         if (prefix.length() >= 1) {
-            prefix = prefix.substring(0, 1).toUpperCase() + prefix.substring(1);
+            prefix = prefix.substring(0, 1).toUpperCase(Locale.ROOT) + prefix.substring(1);
         }
         DirectoryEntry entry = binarySearchByTitle(prefix, true);
         if (entry == null) {
@@ -94,7 +95,7 @@ public class ZIMReader implements Closeable {
         for (int i = 0; i < maxResults; i++) {
             entry = getDirectoryEntryAtTitlePosition(index);
 
-            if (entry.getTitle().toLowerCase().startsWith(prefix)) {
+            if (entry.getTitle().toLowerCase(Locale.ROOT).startsWith(prefix)) {
                 results.add(entry.getTitle());
             }
 

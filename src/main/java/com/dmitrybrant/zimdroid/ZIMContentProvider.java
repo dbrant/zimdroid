@@ -14,16 +14,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
 
 public abstract class ZIMContentProvider extends ContentProvider {
-    public static final Uri CONTENT_URI = Uri.parse("content://org.wikipedia.offline/");
     private static final String TAG = "ZIMContentProvider";
 
-    abstract ByteArrayOutputStream getDataForUrl(String url);
+    protected abstract Uri getContentUri();
+
+    protected abstract ByteArrayOutputStream getDataForUrl(String url);
 
     @Override
     public String getType(Uri uri) {
-        String extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString().toLowerCase());
+        String extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString().toLowerCase(Locale.ROOT));
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         if (TextUtils.isEmpty(mimeType)) {
             mimeType = "application/octet-stream";
@@ -76,11 +78,11 @@ public abstract class ZIMContentProvider extends ContentProvider {
         throw new RuntimeException("Operation not supported");
     }
 
-    private static String getFilePath(Uri articleUri) {
+    private String getFilePath(Uri articleUri) {
         String filePath = articleUri.toString();
-        int pos = articleUri.toString().indexOf(CONTENT_URI.toString());
+        int pos = articleUri.toString().indexOf(getContentUri().toString());
         if (pos != -1) {
-            filePath = articleUri.toString().substring(CONTENT_URI.toString().length());
+            filePath = articleUri.toString().substring(getContentUri().toString().length());
         }
         // Remove fragment (#...) since it's not supported in ZIM structure.
         pos = filePath.indexOf("#");
