@@ -25,6 +25,11 @@ String html = reader.getHtmlForTitle(randomTitle);
 
 ...and so on.
 
+## Resources and references
+
+* Information on the ZIM file format: http://www.openzim.org/wiki/ZIM_file_format
+* LZMA decompression library: https://tukaani.org/xz/java.html
+
 ## Uploading to Bintray
 
 (For my own reference, and sanity)
