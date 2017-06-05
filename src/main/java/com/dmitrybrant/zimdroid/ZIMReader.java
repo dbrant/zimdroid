@@ -9,10 +9,8 @@ import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -79,10 +77,7 @@ public class ZIMReader implements Closeable {
 
     public List<String> searchByPrefix(String prefix, int maxResults) throws IOException {
         List<String> results = new ArrayList<>();
-        // artificially capitalize the first character of the prefix
-        if (prefix.length() >= 1) {
-            prefix = prefix.substring(0, 1).toUpperCase(Locale.ROOT) + prefix.substring(1);
-        }
+        prefix = Util.capitalize(prefix);
         DirectoryEntry entry = binarySearchByTitle(prefix, true);
         if (entry == null) {
             return results;
@@ -108,7 +103,7 @@ public class ZIMReader implements Closeable {
     }
 
     public String getNormalizedTitle(String title) throws IOException {
-        return resolveRedirect(binarySearchByTitle(title, false)).getTitle();
+        return resolveRedirect(binarySearchByTitle(Util.capitalize(title), false)).getTitle();
     }
 
     public ByteArrayOutputStream getDataForUrl(String url) throws IOException {
@@ -163,7 +158,7 @@ public class ZIMReader implements Closeable {
                     offset1 = firstOffset;
                 } else {
                     location = (blobNumber - 1) * BYTES_PER_INT;
-                    skipFully(inputStream, location);
+                    Util.skipFully(inputStream, location);
                     offset1 = inputStream.readIntLe();
                 }
 
@@ -172,7 +167,7 @@ public class ZIMReader implements Closeable {
                 differenceOffset = offset2 - offset1;
                 buffer = new byte[differenceOffset];
 
-                skipFully(inputStream, (offset1 - BYTES_PER_INT * (blobNumber + 2)));
+                Util.skipFully(inputStream, (offset1 - BYTES_PER_INT * (blobNumber + 2)));
 
                 inputStream.read(buffer, 0, differenceOffset);
                 outStream.write(buffer, 0, differenceOffset);
@@ -186,7 +181,7 @@ public class ZIMReader implements Closeable {
                 buffer = new byte[BYTES_PER_INT];
                 xzReader.read(buffer);
 
-                firstOffset = getIntLe(buffer);
+                firstOffset = Util.getIntLe(buffer);
                 numberOfBlobs = firstOffset / BYTES_PER_INT;
 
                 if (blobNumber >= numberOfBlobs) {
@@ -197,18 +192,18 @@ public class ZIMReader implements Closeable {
                     offset1 = firstOffset;
                 } else {
                     location = (blobNumber - 1) * BYTES_PER_INT;
-                    skipFully(xzReader, location);
+                    Util.skipFully(xzReader, location);
                     xzReader.read(buffer);
-                    offset1 = getIntLe(buffer);
+                    offset1 = Util.getIntLe(buffer);
                 }
 
                 xzReader.read(buffer);
-                offset2 = getIntLe(buffer);
+                offset2 = Util.getIntLe(buffer);
 
                 differenceOffset = offset2 - offset1;
                 buffer = new byte[differenceOffset];
 
-                skipFully(xzReader, (offset1 - BYTES_PER_INT * (blobNumber + 2)));
+                Util.skipFully(xzReader, (offset1 - BYTES_PER_INT * (blobNumber + 2)));
 
                 xzReader.read(buffer, 0, differenceOffset);
                 outStream.write(buffer, 0, differenceOffset);
@@ -384,17 +379,5 @@ public class ZIMReader implements Closeable {
             throw new IOException("Too many redirects.");
         }
         return entry;
-    }
-
-    private static void skipFully(InputStream stream, long bytes) throws IOException {
-        while (bytes > 0) {
-            bytes -= stream.skip(bytes);
-        }
-    }
-
-    @SuppressWarnings("checkstyle:magicnumber")
-    private static int getIntLe(byte[] buffer) {
-        return ((buffer[0] & 0xFF) | ((buffer[1] & 0xFF) << 8)
-                | ((buffer[2] & 0xFF) << 16) | ((buffer[3] & 0xFF) << 24));
     }
 }

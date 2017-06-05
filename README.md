@@ -9,7 +9,7 @@ titles.
 
 Add the following to your build.gradle:
 
-`compile 'com.dmitrybrant:zimdroid:0.0.5'`
+`compile 'com.dmitrybrant:zimdroid:0.0.6'`
 
 ## Basic usage
 
@@ -28,7 +28,7 @@ String html = reader.getHtmlForTitle(randomTitle);
 ## Resources and references
 
 * Information on the ZIM file format: http://www.openzim.org/wiki/ZIM_file_format
-* LZMA decompression library: https://tukaani.org/xz/java.html
+* LZMA decompression library (used as a dependency in this library): https://tukaani.org/xz/java.html
 
 ## Uploading to Bintray
 

@@ -25,7 +25,7 @@ public class ZimReaderTest {
             assertEquals(results.size(), 2);
             assertEquals(results.get(0), "Raelette");
 
-            String normalizedTitle = reader.getNormalizedTitle("Ray charles");
+            String normalizedTitle = reader.getNormalizedTitle("ray charles");
             assertEquals(normalizedTitle, "Ray Charles");
 
             String html = reader.getDataForTitle(normalizedTitle).toString("utf-8");
