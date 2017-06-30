@@ -39,7 +39,7 @@ public class ZIMReader implements Closeable {
     private int firstArticleTitleIndex = -1;
     private int lastArticleTitleIndex = -1;
 
-    public ZIMReader(ZIMFile file) {
+    public ZIMReader(ZIMFile file) throws FileNotFoundException {
         zimFile = file;
         try {
             inputStream = new ZIMInputStream(new FileInputStream(zimFile));
@@ -158,7 +158,7 @@ public class ZIMReader implements Closeable {
                 numberOfBlobs = firstOffset / BYTES_PER_INT;
 
                 if (blobNumber >= numberOfBlobs) {
-                    throw new IllegalArgumentException("Blob number greater than total blobs.");
+                    throw new IOException("Blob number greater than total blobs.");
                 }
 
                 if (blobNumber == 0) {
@@ -193,7 +193,7 @@ public class ZIMReader implements Closeable {
                 numberOfBlobs = firstOffset / BYTES_PER_INT;
 
                 if (blobNumber >= numberOfBlobs) {
-                    throw new IllegalArgumentException("Blob number greater than total blobs.");
+                    throw new IOException("Blob number greater than total blobs.");
                 }
 
                 if (blobNumber == 0) {
