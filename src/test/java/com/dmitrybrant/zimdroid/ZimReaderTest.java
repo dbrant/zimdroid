@@ -28,6 +28,9 @@ public class ZimReaderTest {
             String normalizedTitle = reader.getNormalizedTitle("ray charles");
             assertEquals(normalizedTitle, "Ray Charles");
 
+            String mainTitle = reader.getMainPageTitle();
+            assertEquals(mainTitle, "Summary");
+
             String html = reader.getDataForTitle(normalizedTitle).toString("utf-8");
             assertTrue(html.startsWith("<html>"));
 

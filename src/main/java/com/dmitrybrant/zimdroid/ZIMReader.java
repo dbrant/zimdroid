@@ -75,6 +75,14 @@ public class ZIMReader implements Closeable {
         return entry.getTitle();
     }
 
+    public String getMainPageTitle() throws IOException {
+        if (zimFile.getMainPage() < 0) {
+            throw new IOException("The ZIM file does not contain a main page.");
+        }
+        DirectoryEntry entry = getDirectoryEntryAtUrlPosition(zimFile.getMainPage());
+        return entry.getTitle();
+    }
+
     public List<String> searchByPrefix(String prefix, int maxResults) throws IOException {
         List<String> results = new ArrayList<>();
         prefix = Util.capitalize(prefix);
