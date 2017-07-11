@@ -12,7 +12,7 @@ import java.util.List;
  *
  * Loosely based on original implementation by Arunesh Mathur
  */
-public class ZIMFile extends File {
+public class ZimFile extends File {
     private static final int ZIM_HEADER_MAGIC = 0x044D495A;
     private static final int UUID_SIZE = 16;
 
@@ -29,7 +29,7 @@ public class ZIMFile extends File {
 
     private List<String> mimeTypeList = new ArrayList<>();
 
-    public ZIMFile(String path) throws FileNotFoundException {
+    public ZimFile(String path) throws FileNotFoundException {
         super(path);
         readHeader();
     }
@@ -78,7 +78,7 @@ public class ZIMFile extends File {
         int len;
         StringBuffer mimeBuffer;
 
-        ZIMInputStream reader = new ZIMInputStream(new FileInputStream(this));
+        ZimInputStream reader = new ZimInputStream(new FileInputStream(this));
         // Read the contents of the header
         try {
             int magic = reader.readIntLe();

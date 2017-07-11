@@ -13,7 +13,7 @@ public class ZimReaderTest {
     @Test
     public void testZimReader() throws Exception {
 
-        ZIMReader reader = new ZIMReader(new ZIMFile(RAW_DIR + TEST_ZIM_FILE));
+        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE));
         try {
 
             assertTrue(reader.getRandomTitle().length() > 0);

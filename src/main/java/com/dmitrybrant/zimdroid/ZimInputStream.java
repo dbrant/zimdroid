@@ -11,13 +11,13 @@ import java.io.IOException;
  *
  * Loosely based on original implementation by Arunesh Mathur
  */
-public class ZIMInputStream extends BufferedInputStream {
+public class ZimInputStream extends BufferedInputStream {
     private static final int TEMP_BUFFER_SIZE = 8;
 
     private FileInputStream fileStream;
     private byte[] buffer = new byte[TEMP_BUFFER_SIZE];
 
-    public ZIMInputStream(FileInputStream fileStream) {
+    public ZimInputStream(FileInputStream fileStream) {
         super(fileStream);
         this.fileStream = fileStream;
     }

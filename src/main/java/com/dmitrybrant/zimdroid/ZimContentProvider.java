@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
-public abstract class ZIMContentProvider extends ContentProvider {
-    private static final String TAG = "ZIMContentProvider";
+public abstract class ZimContentProvider extends ContentProvider {
+    private static final String TAG = "ZimContentProvider";
 
     protected abstract Uri getContentUri();
 

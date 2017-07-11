@@ -19,7 +19,7 @@ import java.util.Random;
  *
  * Loosely based on original implementation by Arunesh Mathur
  */
-public class ZIMReader implements Closeable {
+public class ZimReader implements Closeable {
     private static final int COMPRESSION_TYPE_NONE = 0;
     private static final int COMPRESSION_TYPE_NONE_OLD = 1;
     private static final int COMPRESSION_TYPE_LZMA = 4;
@@ -27,8 +27,8 @@ public class ZIMReader implements Closeable {
     private static final int BYTES_PER_LONG = 8;
     private static final int CACHE_SIZE = 256;
 
-    private ZIMFile zimFile;
-    private ZIMInputStream inputStream;
+    private ZimFile zimFile;
+    private ZimInputStream inputStream;
 
     private LruCache<Integer, DirectoryEntry> entryByTitleCache = new LruCache<>(CACHE_SIZE);
     private LruCache<Integer, DirectoryEntry> entryByUrlCache = new LruCache<>(CACHE_SIZE);
@@ -39,10 +39,10 @@ public class ZIMReader implements Closeable {
     private int firstArticleTitleIndex = -1;
     private int lastArticleTitleIndex = -1;
 
-    public ZIMReader(ZIMFile file) throws FileNotFoundException {
+    public ZimReader(ZimFile file) throws FileNotFoundException {
         zimFile = file;
         try {
-            inputStream = new ZIMInputStream(new FileInputStream(zimFile));
+            inputStream = new ZimInputStream(new FileInputStream(zimFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
