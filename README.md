@@ -9,15 +9,15 @@ titles.
 
 Add the following to your build.gradle:
 
-`compile 'com.dmitrybrant:zimdroid:0.0.7'`
+`compile 'com.dmitrybrant:zimdroid:0.0.8'`
 
 ## Basic usage
 
-The class `ZIMReader` contains all the functions necessary for parsing and extracting content from
-a `ZIMFile`. It can be used like this:
+The class `ZimReader` contains all the functions necessary for parsing and extracting content from
+a `ZimFile`. It can be used like this:
 
 ```
-ZIMReader reader = new ZIMReader(new ZIMFile("/path/to/file.zim"));
+ZimReader reader = new ZimReader(new ZimFile("/path/to/file.zim"));
 List<String> results = reader.searchByPrefix("cat", 10);
 String randomTitle = reader.getRandomTitle();
 String html = reader.getHtmlForTitle(randomTitle);
