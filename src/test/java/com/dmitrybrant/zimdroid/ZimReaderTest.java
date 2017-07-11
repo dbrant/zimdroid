@@ -23,7 +23,8 @@ public class ZimReaderTest {
 
         when(mockCache.get(any(Integer.TYPE))).thenReturn(null);
 
-        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE), mockCache, mockCache);
+        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE),
+                mockCache, mockCache);
         try {
 
             assertTrue(reader.getRandomTitle().length() > 0);

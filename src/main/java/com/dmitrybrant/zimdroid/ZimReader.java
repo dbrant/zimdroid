@@ -39,16 +39,29 @@ public class ZimReader implements Closeable {
     private int firstArticleTitleIndex = -1;
     private int lastArticleTitleIndex = -1;
 
+    /**
+     * Construct a ZIM reader that operates on the given ZIM file.
+     * @param file ZIM file from which to read content.
+     * @throws FileNotFoundException
+     */
     public ZimReader(ZimFile file) throws FileNotFoundException {
         init(file);
         entryByTitleCache = new LruCache<>(CACHE_SIZE);
         entryByUrlCache = new LruCache<>(CACHE_SIZE);
     }
 
-    // For testing only
-    ZimReader(ZimFile file, LruCache titleCache, LruCache urlCache) throws FileNotFoundException {
+    /**
+     * For testing purposes only. Do not use this constructor for production.
+     * @param file ZIM file from which to read content.
+     * @param titleCache Object for caching Title pointers. Can be mocked with get() returning null.
+     * @param urlCache Object for caching Url pointers. Can be mocked with get() returning null.
+     * @throws Exception
+     */
+    public ZimReader(ZimFile file, LruCache titleCache, LruCache urlCache) throws Exception {
         init(file);
+        //noinspection unchecked
         entryByTitleCache = titleCache;
+        //noinspection unchecked
         entryByUrlCache = urlCache;
     }
 
