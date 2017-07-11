@@ -30,8 +30,8 @@ public class ZimReader implements Closeable {
     private ZimFile zimFile;
     private ZimInputStream inputStream;
 
-    private LruCache<Integer, DirectoryEntry> entryByTitleCache = new LruCache<>(CACHE_SIZE);
-    private LruCache<Integer, DirectoryEntry> entryByUrlCache = new LruCache<>(CACHE_SIZE);
+    private final LruCache<Integer, DirectoryEntry> entryByTitleCache;
+    private final LruCache<Integer, DirectoryEntry> entryByUrlCache;
 
     private String zimTitle;
     private String zimDescription;
@@ -40,6 +40,19 @@ public class ZimReader implements Closeable {
     private int lastArticleTitleIndex = -1;
 
     public ZimReader(ZimFile file) throws FileNotFoundException {
+        init(file);
+        entryByTitleCache = new LruCache<>(CACHE_SIZE);
+        entryByUrlCache = new LruCache<>(CACHE_SIZE);
+    }
+
+    // For testing only
+    ZimReader(ZimFile file, LruCache titleCache, LruCache urlCache) throws FileNotFoundException {
+        init(file);
+        entryByTitleCache = titleCache;
+        entryByUrlCache = urlCache;
+    }
+
+    private void init(ZimFile file) {
         zimFile = file;
         try {
             inputStream = new ZimInputStream(new FileInputStream(zimFile));
