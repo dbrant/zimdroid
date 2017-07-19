@@ -4,6 +4,7 @@ import android.util.LruCache;
 
 import org.tukaani.xz.SingleXZInputStream;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.FileInputStream;
@@ -81,14 +82,21 @@ public class ZimReader implements Closeable {
 
     public String getZimTitle() throws IOException {
         if (zimTitle == null) {
-            zimTitle = getDataForSpecialUrl("Title").toString("utf-8");
+            ByteArrayOutputStream stream = getDataForSpecialUrl("Title");
+            zimTitle = stream != null ? stream.toString("utf-8") : "";
         }
         return zimTitle;
     }
 
     public String getZimDescription() throws IOException {
         if (zimDescription == null) {
-            zimDescription = getDataForSpecialUrl("Description").toString("utf-8");
+            ByteArrayOutputStream stream = getDataForSpecialUrl("Description");
+            if (stream != null) {
+                zimDescription = stream.toString("utf-8");
+            } else {
+                stream = getDataForSpecialUrl("Subtitle");
+                zimDescription = stream != null ? stream.toString("utf-8") : "";
+            }
         }
         return zimDescription;
     }
