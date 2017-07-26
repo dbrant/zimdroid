@@ -2,7 +2,6 @@ package com.dmitrybrant.zimdroid;
 
 import android.util.LruCache;
 
-import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.SingleXZInputStream;
 
 import java.io.ByteArrayOutputStream;
@@ -33,6 +32,7 @@ public class ZimReader implements Closeable {
 
     private final LruCache<Integer, DirectoryEntry> entryByTitleCache;
     private final LruCache<Integer, DirectoryEntry> entryByUrlCache;
+    private int lzmaDictSize;
 
     private String zimTitle;
     private String zimDescription;
@@ -78,6 +78,20 @@ public class ZimReader implements Closeable {
     @Override
     public void close() throws IOException {
         inputStream.close();
+    }
+
+    /**
+     * Set the dictionary size that will be used by the LZMA decoder. This is useful for
+     * constraining the decoder's memory usage in environments with very little memory, e.g.
+     * Android devices with a small Java VM size.  The tradeoff is that if a custom dictionary
+     * size is set, it will not be possible to decode chunks of data whose uncompressed size
+     * is larger than the dictionary size.
+     * @param dictSize If this is set to 0, the decoder will use the default dictionary size that is
+     *                 dictated by the actual file that's being processed. Otherwise, the specified
+     *                 size will be used.
+     */
+    public void setLzmaDictSize(int dictSize) {
+        lzmaDictSize = dictSize;
     }
 
     public String getZimTitle() throws IOException {
@@ -217,7 +231,8 @@ public class ZimReader implements Closeable {
 
             case COMPRESSION_TYPE_LZMA:
 
-                xzReader = new SingleXZInputStream(inputStream, 100000);
+                SingleXZInputStream.setLZMA2DictSize(lzmaDictSize);
+                xzReader = new SingleXZInputStream(inputStream);
 
                 buffer = new byte[BYTES_PER_INT];
                 xzReader.read(buffer);

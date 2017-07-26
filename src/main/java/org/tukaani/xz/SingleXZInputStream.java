@@ -52,6 +52,10 @@ public class SingleXZInputStream extends InputStream {
 
     private final byte[] tempBuf = new byte[1];
 
+    public static void setLZMA2DictSize(int dictSize) {
+        LZMA2Decoder.setDefaultDictSize(dictSize);
+    }
+
     /**
      * Reads the Stream Header into a buffer.
      * This is a helper function for the constructors.

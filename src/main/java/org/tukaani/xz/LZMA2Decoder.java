@@ -12,6 +12,13 @@ package org.tukaani.xz;
 import java.io.InputStream;
 
 class LZMA2Decoder extends LZMA2Coder implements FilterDecoder {
+
+    private static int DEFAULT_DICT_SIZE = 0;
+
+    public static void setDefaultDictSize(int dictSize) {
+        DEFAULT_DICT_SIZE = dictSize;
+    }
+
     private int dictSize;
 
     LZMA2Decoder(byte[] props) throws UnsupportedOptionsException {
@@ -21,8 +28,12 @@ class LZMA2Decoder extends LZMA2Coder implements FilterDecoder {
             throw new UnsupportedOptionsException(
                     "Unsupported LZMA2 properties");
 
-        dictSize = 2 | (props[0] & 1);
-        dictSize <<= (props[0] >>> 1) + 11;
+        if (DEFAULT_DICT_SIZE > 0) {
+            dictSize = DEFAULT_DICT_SIZE;
+        } else {
+            dictSize = 2 | (props[0] & 1);
+            dictSize <<= (props[0] >>> 1) + 11;
+        }
     }
 
     public int getMemoryUsage() {

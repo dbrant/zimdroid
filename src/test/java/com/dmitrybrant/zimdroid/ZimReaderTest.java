@@ -23,8 +23,7 @@ public class ZimReaderTest {
 
         when(mockCache.get(any(Integer.TYPE))).thenReturn(null);
 
-        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE),
-                mockCache, mockCache);
+        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE), mockCache, mockCache);
         try {
 
             assertTrue(reader.getRandomTitle().length() > 0);
@@ -44,6 +43,13 @@ public class ZimReaderTest {
 
             String html = reader.getDataForTitle(normalizedTitle).toString("utf-8");
             assertTrue(html.startsWith("<html>"));
+            assertTrue(html.endsWith("</html>"));
+
+            reader.setLzmaDictSize(2 * 1024 * 1024);
+
+            html = reader.getDataForTitle(normalizedTitle).toString("utf-8");
+            assertTrue(html.startsWith("<html>"));
+            assertTrue(html.endsWith("</html>"));
 
         } finally {
             reader.close();
