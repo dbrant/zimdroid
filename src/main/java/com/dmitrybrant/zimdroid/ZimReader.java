@@ -2,9 +2,9 @@ package com.dmitrybrant.zimdroid;
 
 import android.util.LruCache;
 
+import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.SingleXZInputStream;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.FileInputStream;
@@ -217,8 +217,7 @@ public class ZimReader implements Closeable {
 
             case COMPRESSION_TYPE_LZMA:
 
-                final int memoryLimit = 4000000;
-                xzReader = new SingleXZInputStream(inputStream, memoryLimit);
+                xzReader = new SingleXZInputStream(inputStream, 100000);
 
                 buffer = new byte[BYTES_PER_INT];
                 xzReader.read(buffer);
