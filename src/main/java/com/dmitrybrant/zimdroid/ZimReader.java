@@ -159,7 +159,11 @@ public class ZimReader implements Closeable {
     }
 
     public String getNormalizedTitle(String title) throws IOException {
-        return resolveRedirect(binarySearchByTitle(Util.capitalize(title), false)).getTitle();
+        DirectoryEntry entry = binarySearchByTitle(Util.capitalize(title), false);
+        if (entry == null) {
+            return null;
+        }
+        return resolveRedirect(entry).getTitle();
     }
 
     public ByteArrayOutputStream getDataForUrl(String url) throws IOException {
