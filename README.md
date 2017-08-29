@@ -9,7 +9,7 @@ titles.
 
 Add the following to your build.gradle:
 
-`compile 'com.dmitrybrant:zimdroid:0.0.11'`
+`compile 'com.dmitrybrant:zimdroid:0.0.12'`
 
 ## Basic usage
 
