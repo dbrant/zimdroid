@@ -2,7 +2,7 @@ package com.dmitrybrant.zimdroid;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class ZimFile extends File {
 
     private List<String> mimeTypeList = new ArrayList<>();
 
-    public ZimFile(String path) throws FileNotFoundException {
+    public ZimFile(String path) throws IOException {
         super(path);
         readHeader();
     }
@@ -74,19 +74,18 @@ public class ZimFile extends File {
         return layoutPage;
     }
 
-    private void readHeader() throws FileNotFoundException {
-        int len;
-        StringBuffer mimeBuffer;
-
+    private void readHeader() throws IOException {
         ZimInputStream reader = new ZimInputStream(new FileInputStream(this));
         // Read the contents of the header
         try {
             int magic = reader.readIntLe();
             if (magic != ZIM_HEADER_MAGIC) {
-                throw new IllegalArgumentException("Invalid ZIM file.");
+                throw new IOException("Invalid ZIM file.");
             }
             version = reader.readIntLe();
-            reader.read(uuid);
+            if (reader.read(uuid) != uuid.length) {
+                throw new IOException("Failed to read from stream.");
+            }
             articleCount = reader.readIntLe();
             clusterCount = reader.readIntLe();
             urlPtrPos = reader.readLongLe();
@@ -98,22 +97,13 @@ public class ZimFile extends File {
 
             reader.seek(mimeListPos);
             while (true) {
-                int c = reader.read();
-                len = 0;
-                mimeBuffer = new StringBuffer();
-                while (c != '\0') {
-                    mimeBuffer.append((char) c);
-                    c = reader.read();
-                    len++;
-                }
-                if (len == 0) {
+                String mimeStr = reader.readString();
+                if (mimeStr.length() == 0) {
                     break;
                 }
-                mimeTypeList.add(mimeBuffer.toString());
+                mimeTypeList.add(mimeStr);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             reader.close();
         }

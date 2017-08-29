@@ -24,20 +24,26 @@ public class ZimInputStream extends BufferedInputStream {
 
     @SuppressWarnings("checkstyle:magicnumber")
     public int readShortLe() throws IOException {
-        read(buffer, 0, 2);
+        if (read(buffer, 0, 2) != 2) {
+            throw new IOException("Failed to read from stream.");
+        }
         return ((buffer[0] & 0xFF) | ((buffer[1] & 0xFF) << 8));
     }
 
     @SuppressWarnings("checkstyle:magicnumber")
     public int readIntLe() throws IOException {
-        read(buffer, 0, 4);
+        if (read(buffer, 0, 4) != 4) {
+            throw new IOException("Failed to read from stream.");
+        }
         return ((buffer[0] & 0xFF) | ((buffer[1] & 0xFF) << 8)
                 | ((buffer[2] & 0xFF) << 16) | ((buffer[3] & 0xFF) << 24));
     }
 
     @SuppressWarnings("checkstyle:magicnumber")
     public long readLongLe() throws IOException {
-        read(buffer, 0, 8);
+        if (read(buffer, 0, 8) != 8) {
+            throw new IOException("Failed to read from stream.");
+        }
         return ((long)(buffer[0] & 0xFF) | ((long)(buffer[1] & 0xFF) << 8)
                 | ((long)(buffer[2] & 0xFF) << 16) | ((long)(buffer[3] & 0xFF) << 24)
                 | ((long)(buffer[4] & 0xFF) << 32) | ((long)(buffer[5] & 0xFF) << 40)
@@ -49,9 +55,15 @@ public class ZimInputStream extends BufferedInputStream {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream(bufSize);
         int b;
         b = read();
+        if (b < 0) {
+            throw new IOException("Failed to read from stream.");
+        }
         while (b != 0) {
             bytes.write(b);
             b = read();
+            if (b < 0) {
+                throw new IOException("Failed to read from stream.");
+            }
         }
         return bytes.toString("utf-8");
     }
