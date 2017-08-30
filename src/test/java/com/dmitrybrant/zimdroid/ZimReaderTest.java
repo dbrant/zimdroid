@@ -35,6 +35,7 @@ public class ZimReaderTest {
 
             assertEquals(reader.getZimTitle(), "Wikipedia");
             assertEquals(reader.getZimDescription(), "From Wikipedia, the free encyclopedia");
+            assertEquals(reader.getZimDate(), "2015-06-02");
 
             List<String> results = reader.searchByPrefix("R", 2);
             assertEquals(results.size(), 2);
