@@ -9,8 +9,12 @@ import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -36,7 +40,7 @@ public class ZimReader implements Closeable {
 
     private String zimTitle;
     private String zimDescription;
-    private String zimDate;
+    private Date zimDate;
 
     private int firstArticleTitleIndex = -1;
     private int lastArticleTitleIndex = -1;
@@ -96,7 +100,7 @@ public class ZimReader implements Closeable {
     }
 
     public String getZimTitle() throws IOException {
-        if (zimTitle == null) {
+        if (zimTitle == null || zimTitle.length() == 0) {
             ByteArrayOutputStream stream = getDataForSpecialUrl("Title");
             zimTitle = stream != null ? stream.toString("utf-8") : "";
         }
@@ -104,7 +108,7 @@ public class ZimReader implements Closeable {
     }
 
     public String getZimDescription() throws IOException {
-        if (zimDescription == null) {
+        if (zimDescription == null || zimDescription.length() == 0) {
             ByteArrayOutputStream stream = getDataForSpecialUrl("Description");
             if (stream != null) {
                 zimDescription = stream.toString("utf-8");
@@ -116,12 +120,20 @@ public class ZimReader implements Closeable {
         return zimDescription;
     }
 
-    public String getZimDate() throws IOException {
+    public Date getZimDate() {
         if (zimDate == null) {
-            ByteArrayOutputStream stream = getDataForSpecialUrl("Date");
-            zimDate = stream != null ? stream.toString("utf-8") : "";
+            try {
+                ByteArrayOutputStream stream = getDataForSpecialUrl("Date");
+                String dateStr = stream != null ? stream.toString("utf-8") : "";
+                zimDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).parse(dateStr);
+            } catch (IOException e) {
+                // Keep our internal date null, so we'll try again next time.
+            } catch (ParseException e) {
+                // The date string is actually malformed, so give up.
+                zimDate = new Date(zimFile.lastModified());
+            }
         }
-        return zimDate;
+        return zimDate != null ? zimDate : new Date(zimFile.lastModified());
     }
 
     public String getRandomTitle() throws IOException {

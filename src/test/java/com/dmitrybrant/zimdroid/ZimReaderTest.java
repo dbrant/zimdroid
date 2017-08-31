@@ -8,7 +8,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
@@ -35,7 +38,7 @@ public class ZimReaderTest {
 
             assertEquals(reader.getZimTitle(), "Wikipedia");
             assertEquals(reader.getZimDescription(), "From Wikipedia, the free encyclopedia");
-            assertEquals(reader.getZimDate(), "2015-06-02");
+            assertEquals(reader.getZimDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).parse("2015-06-02"));
 
             List<String> results = reader.searchByPrefix("R", 2);
             assertEquals(results.size(), 2);
