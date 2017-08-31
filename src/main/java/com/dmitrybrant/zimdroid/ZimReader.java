@@ -36,6 +36,7 @@ public class ZimReader implements Closeable {
 
     private String zimTitle;
     private String zimDescription;
+    private String zimDate;
 
     private int firstArticleTitleIndex = -1;
     private int lastArticleTitleIndex = -1;
@@ -113,6 +114,14 @@ public class ZimReader implements Closeable {
             }
         }
         return zimDescription;
+    }
+
+    public String getZimDate() throws IOException {
+        if (zimDate == null) {
+            ByteArrayOutputStream stream = getDataForSpecialUrl("Date");
+            zimDate = stream != null ? stream.toString("utf-8") : "";
+        }
+        return zimDate;
     }
 
     public String getRandomTitle() throws IOException {
