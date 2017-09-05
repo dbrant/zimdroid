@@ -27,28 +27,51 @@ public class ZimReaderTest {
     @Mock LruCache<Integer, DirectoryEntry> mockCache;
 
     @Test
-    public void testZimReader() throws Exception {
-
+    public void testZimReaderMetadata() throws Exception {
         when(mockCache.get(any(Integer.TYPE))).thenReturn(null);
-
         ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE), mockCache, mockCache);
         try {
-
-            assertTrue(reader.getRandomTitle().length() > 0);
 
             assertEquals(reader.getZimTitle(), "Wikipedia");
             assertEquals(reader.getZimDescription(), "From Wikipedia, the free encyclopedia");
             assertEquals(reader.getZimDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).parse("2015-06-02"));
 
+            assertTrue(reader.getRandomTitle().length() > 0);
+
+            String mainTitle = reader.getMainPageTitle();
+            assertEquals(mainTitle, "Summary");
+
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testZimReaderPrefixSearch() throws Exception {
+        when(mockCache.get(any(Integer.TYPE))).thenReturn(null);
+        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE), mockCache, mockCache);
+        try {
+
             List<String> results = reader.searchByPrefix("R", 2);
             assertEquals(results.size(), 2);
             assertEquals(results.get(0), "Raelette");
 
-            String normalizedTitle = reader.getNormalizedTitle("ray charles");
-            assertEquals(normalizedTitle, "Ray Charles");
+        } finally {
+            reader.close();
+        }
+    }
 
-            String mainTitle = reader.getMainPageTitle();
-            assertEquals(mainTitle, "Summary");
+    @Test
+    public void testZimReaderGetArticleContent() throws Exception {
+        when(mockCache.get(any(Integer.TYPE))).thenReturn(null);
+        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE), mockCache, mockCache);
+        try {
+
+            String normalizedTitle = reader.getNormalizedTitle("A Fool for You");
+            assertEquals(normalizedTitle, "A Fool for You");
+
+            normalizedTitle = reader.getNormalizedTitle("ray charles");
+            assertEquals(normalizedTitle, "Ray Charles");
 
             String html = reader.getDataForTitle(normalizedTitle).toString("utf-8");
             assertTrue(html.startsWith("<html>"));
@@ -59,6 +82,23 @@ public class ZimReaderTest {
             html = reader.getDataForTitle(normalizedTitle).toString("utf-8");
             assertTrue(html.startsWith("<html>"));
             assertTrue(html.endsWith("</html>"));
+
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testZimReaderGetMediaContent() throws Exception {
+        when(mockCache.get(any(Integer.TYPE))).thenReturn(null);
+        ZimReader reader = new ZimReader(new ZimFile(RAW_DIR + TEST_ZIM_FILE), mockCache, mockCache);
+        try {
+
+            reader.setLzmaDictSize(2 * 1024 * 1024);
+
+            byte[] bytes = reader.getDataForUrl("I/m/Ray_C._Geor.jpg").toByteArray();
+            assertEquals(bytes[0], (byte) 0xFF);
+            assertEquals(bytes[bytes.length - 1], (byte) 0xD9);
 
         } finally {
             reader.close();

@@ -24,6 +24,10 @@ import java.util.Random;
  * Loosely based on original implementation by Arunesh Mathur
  */
 public class ZimReader implements Closeable {
+    private static char NAMESPACE_ARTICLE = 'A';
+    private static char NAMESPACE_MEDIA = 'I';
+    private static char NAMESPACE_META = 'M';
+
     private static final int COMPRESSION_TYPE_NONE = 0;
     private static final int COMPRESSION_TYPE_NONE_OLD = 1;
     private static final int COMPRESSION_TYPE_LZMA = 4;
@@ -101,7 +105,7 @@ public class ZimReader implements Closeable {
 
     public String getZimTitle() throws IOException {
         if (zimTitle == null || zimTitle.length() == 0) {
-            ByteArrayOutputStream stream = getDataForSpecialUrl("Title");
+            ByteArrayOutputStream stream = getDataForMetaTag("Title");
             zimTitle = stream != null ? stream.toString("utf-8") : "";
         }
         return zimTitle;
@@ -109,11 +113,11 @@ public class ZimReader implements Closeable {
 
     public String getZimDescription() throws IOException {
         if (zimDescription == null || zimDescription.length() == 0) {
-            ByteArrayOutputStream stream = getDataForSpecialUrl("Description");
+            ByteArrayOutputStream stream = getDataForMetaTag("Description");
             if (stream != null) {
                 zimDescription = stream.toString("utf-8");
             } else {
-                stream = getDataForSpecialUrl("Subtitle");
+                stream = getDataForMetaTag("Subtitle");
                 zimDescription = stream != null ? stream.toString("utf-8") : "";
             }
         }
@@ -123,7 +127,7 @@ public class ZimReader implements Closeable {
     public Date getZimDate() {
         if (zimDate == null) {
             try {
-                ByteArrayOutputStream stream = getDataForSpecialUrl("Date");
+                ByteArrayOutputStream stream = getDataForMetaTag("Date");
                 String dateStr = stream != null ? stream.toString("utf-8") : "";
                 zimDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).parse(dateStr);
             } catch (IOException e) {
@@ -155,7 +159,7 @@ public class ZimReader implements Closeable {
     public List<String> searchByPrefix(String prefix, int maxResults) throws IOException {
         List<String> results = new ArrayList<>();
         prefix = Util.capitalize(prefix);
-        DirectoryEntry entry = binarySearchByTitle(prefix, true);
+        DirectoryEntry entry = binarySearchByTitle(NAMESPACE_ARTICLE, prefix, true);
         if (entry == null) {
             return results;
         }
@@ -180,7 +184,7 @@ public class ZimReader implements Closeable {
     }
 
     public String getNormalizedTitle(String title) throws IOException {
-        DirectoryEntry entry = binarySearchByTitle(Util.capitalize(title), false);
+        DirectoryEntry entry = binarySearchByTitle(NAMESPACE_ARTICLE, Util.capitalize(title), false);
         if (entry == null) {
             return null;
         }
@@ -188,15 +192,21 @@ public class ZimReader implements Closeable {
     }
 
     public ByteArrayOutputStream getDataForUrl(String url) throws IOException {
-        return getData(binarySearchByUrl(url, false));
+        String[] urlParts = url.split("/");
+        if (urlParts.length > 0 && urlParts[0].length() > 0 && url.length() > (urlParts[0].length() + 1)) {
+            return getData(binarySearchByUrl(urlParts[0].charAt(0),
+                    url.substring(urlParts[0].length() + 1, url.length()), false));
+        } else {
+            return getData(binarySearchByUrl(NAMESPACE_ARTICLE, url, false));
+        }
     }
 
     public ByteArrayOutputStream getDataForTitle(String title) throws IOException {
-        return getData(binarySearchByTitle(title, false));
+        return getData(binarySearchByTitle(NAMESPACE_ARTICLE, title, false));
     }
 
-    public ByteArrayOutputStream getDataForSpecialUrl(String url) throws IOException {
-        return getData(getDirectoryEntryFromEnd(url));
+    private ByteArrayOutputStream getDataForMetaTag(String title) throws IOException {
+        return getData(binarySearchByTitle(NAMESPACE_META, title, false));
     }
 
     private synchronized ByteArrayOutputStream getData(DirectoryEntry entry) throws IOException {
@@ -340,7 +350,7 @@ public class ZimReader implements Closeable {
         return midIndex;
     }
 
-    private DirectoryEntry binarySearchByUrl(String url, boolean getClosest) throws IOException {
+    private DirectoryEntry binarySearchByUrl(char namespace, String url, boolean getClosest) throws IOException {
         DirectoryEntry entry = null;
         int beginIndex = 0, endIndex = beginIndex + zimFile.getArticleCount(), midIndex;
 
@@ -350,6 +360,15 @@ public class ZimReader implements Closeable {
             if (entry == null) {
                 return null;
             }
+
+            if (namespace < entry.getNamespace()) {
+                endIndex = midIndex - 1;
+                continue;
+            } else if (namespace > entry.getNamespace()) {
+                beginIndex = midIndex + 1;
+                continue;
+            }
+
             if (url.compareTo(entry.getUrl()) < 0) {
                 endIndex = midIndex - 1;
             } else if (url.compareTo(entry.getUrl()) > 0) {
@@ -361,7 +380,7 @@ public class ZimReader implements Closeable {
         return getClosest ? entry : null;
     }
 
-    private DirectoryEntry binarySearchByTitle(String title, boolean getClosest) throws IOException {
+    private DirectoryEntry binarySearchByTitle(char namespace, String title, boolean getClosest) throws IOException {
         DirectoryEntry entry = null;
         int beginIndex = 0, endIndex = beginIndex + zimFile.getArticleCount(), midIndex;
 
@@ -371,6 +390,15 @@ public class ZimReader implements Closeable {
             if (entry == null) {
                 return null;
             }
+
+            if (namespace < entry.getNamespace()) {
+                endIndex = midIndex - 1;
+                continue;
+            } else if (namespace > entry.getNamespace()) {
+                beginIndex = midIndex + 1;
+                continue;
+            }
+
             if (title.compareTo(entry.getTitle()) < 0) {
                 endIndex = midIndex - 1;
             } else if (title.compareTo(entry.getTitle()) > 0) {
