@@ -410,23 +410,6 @@ public class ZimReader implements Closeable {
         return getClosest ? entry : null;
     }
 
-    private DirectoryEntry getDirectoryEntryFromEnd(String url) throws IOException {
-        DirectoryEntry entry;
-        final int maxEntriesToSearch = 256;
-        int index = zimFile.getArticleCount() - 1;
-
-        for (int i = index; i > 0 && zimFile.getArticleCount() - i < maxEntriesToSearch; i--) {
-            entry = getDirectoryEntryAtUrlPosition(i);
-            if (entry == null) {
-                return null;
-            }
-            if (url.equals(entry.getUrl())) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
     private synchronized DirectoryEntry getDirectoryEntryAtTitlePosition(int position) throws IOException {
         if (entryByTitleCache.get(position) != null) {
             return entryByTitleCache.get(position);
