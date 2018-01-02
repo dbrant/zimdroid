@@ -19,7 +19,7 @@ import java.util.Random;
 
 /**
  * Reads content and metadata from a ZIM file.
- * Dmitry Brant, 2017.
+ * Copyright Dmitry Brant, 2017-2018.
  *
  * Loosely based on original implementation by Arunesh Mathur
  */

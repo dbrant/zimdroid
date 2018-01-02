@@ -7,7 +7,7 @@ import java.io.IOException;
 
 /**
  * Custom stream type for reading data from a ZIM file.
- * Dmitry Brant, 2017.
+ * Copyright Dmitry Brant, 2017-2018.
  *
  * Loosely based on original implementation by Arunesh Mathur
  */
