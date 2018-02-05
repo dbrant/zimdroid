@@ -13,6 +13,12 @@ android:
 
     # Additional components
     - extra-android-m2repository
+
+# Temporary fix for API 27:
+# Remove when https://github.com/travis-ci/travis-ci/issues/8874 is fixed.
+before_install:
+    - yes | sdkmanager "platforms;android-27"
+
 licenses:
     - android-sdk-preview-license-.+
     - android-sdk-license-.+
