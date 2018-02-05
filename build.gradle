@@ -76,24 +76,25 @@ artifacts {
     archives sourcesJar
 }
 
+Properties properties = new Properties()
+if ( project.rootProject.file('local.properties').isFile() ) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+}
+
 bintray {
-    File testFile = new File('local.properties');
-    if ( testFile.isFile() ) {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        user = properties.getProperty("bintray.user")
-        key = properties.getProperty("bintray.apikey")
-        configurations = ['archives']
-        pkg {
-            repo = 'maven'
-            name = 'zimdroid'
-            licenses = ['Apache-2.0']
-            version {
-                name = "${VERSION_NAME}"
-            }
-            publish = true
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+	println 'Bintray user: ' + user
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'zimdroid'
+        licenses = ['Apache-2.0']
+        version {
+            name = "${VERSION_NAME}"
         }
-	}
+        publish = true
+    }
 }
 
 install {
