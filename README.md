@@ -1,4 +1,7 @@
 # zimdroid
+
+[![Build Status](https://travis-ci.org/dbrant/zimdroid.svg?branch=master)](https://travis-ci.org/dbrant/zimdroid)
+
 This is a lightweight Android library for working with ZIM files, which are compilations of HTML
 and media content most often used for bundling Wikipedia articles for offline use.  The library
 provides random access functionality to retrieve articles and their associated media from ZIM
