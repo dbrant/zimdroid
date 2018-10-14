@@ -4,8 +4,8 @@ buildscript {
         google()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:${ANDROID_GRADLE_PLUGIN_VERSION}"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:${ANDROID_MAVEN_GRADLE_PLUGIN_VERSION}"
+        classpath "com.android.tools.build:gradle:3.2.1"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:2.1"
     }
 }
 
@@ -15,6 +15,7 @@ plugins {
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
     apply plugin: 'com.android.library'
@@ -26,12 +27,12 @@ version = "${VERSION_NAME}"
 group = "${GROUP}"
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         minSdkVersion 12
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "${VERSION_NAME}"
 
