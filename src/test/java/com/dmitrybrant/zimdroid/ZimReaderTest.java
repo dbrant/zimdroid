@@ -3,9 +3,7 @@ package com.dmitrybrant.zimdroid;
 import android.util.LruCache;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -15,7 +13,6 @@ import java.util.Locale;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ZimReaderTest {
     private static final String RAW_DIR = "src/test/res/raw/";
     private static final String TEST_ZIM_FILE = "wikipedia_en_ray_charles_2015-06.zim";
@@ -24,7 +21,7 @@ public class ZimReaderTest {
     private static final String ZIM_MALFORMED_HEADER = "malformed_header.zim";
     private static final String ZIM_NO_CONTENT_AFTER_HEADER = "cut_off_after_header.zim";
 
-    @Mock LruCache<Integer, DirectoryEntry> mockCache;
+    @Mock LruCache<Integer, DirectoryEntry> mockCache = mock(LruCache.class);
 
     @Test
     public void testZimReaderMetadata() throws Exception {
