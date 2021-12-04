@@ -4,12 +4,12 @@ buildscript {
         google()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.2"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:2.1"
+        classpath "com.android.tools.build:gradle:7.0.3"
     }
 }
 
 plugins {
+    id 'maven-publish'
     id "com.jfrog.bintray" version "1.7.3"
 }
 
@@ -19,7 +19,6 @@ allprojects {
         mavenCentral()
     }
     apply plugin: 'com.android.library'
-    apply plugin: 'com.github.dcendents.android-maven'
     apply plugin: 'com.jfrog.bintray'
 }
 
@@ -97,31 +96,22 @@ bintray {
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
 
-                name 'ZimDroid'
-                description 'Android library for working with ZIM files.'
-                url 'https://github.com/dbrant/zimdroid'
-                inceptionYear '2017'
+                groupId = "${GROUP}"
+                artifactId = 'zimdroid'
+                version = "${VERSION_NAME}"
+            }
+            debug(MavenPublication) {
+                from components.debug
 
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'dmitrybrant'
-                        name 'Dmitry Brant'
-                        email 'me@dmitrybrant.com'
-                    }
-                }
+                groupId = "${GROUP}"
+                artifactId = 'zimdroid-debug'
+                version = "${VERSION_NAME}"
             }
         }
     }
