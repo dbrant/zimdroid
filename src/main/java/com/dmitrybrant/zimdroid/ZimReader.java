@@ -24,9 +24,9 @@ import java.util.Random;
  * Loosely based on original implementation by Arunesh Mathur
  */
 public class ZimReader implements Closeable {
-    private static char NAMESPACE_ARTICLE = 'A';
-    private static char NAMESPACE_MEDIA = 'I';
-    private static char NAMESPACE_META = 'M';
+    private static final char NAMESPACE_ARTICLE = 'A';
+    private static final char NAMESPACE_MEDIA = 'I';
+    private static final char NAMESPACE_META = 'M';
 
     private static final int COMPRESSION_TYPE_NONE = 0;
     private static final int COMPRESSION_TYPE_NONE_OLD = 1;
@@ -52,9 +52,8 @@ public class ZimReader implements Closeable {
     /**
      * Construct a ZIM reader that operates on the given ZIM file.
      * @param file ZIM file from which to read content.
-     * @throws FileNotFoundException
      */
-    public ZimReader(ZimFile file) throws FileNotFoundException {
+    public ZimReader(ZimFile file) {
         init(file);
         entryByTitleCache = new LruCache<>(CACHE_SIZE);
         entryByUrlCache = new LruCache<>(CACHE_SIZE);
@@ -65,13 +64,10 @@ public class ZimReader implements Closeable {
      * @param file ZIM file from which to read content.
      * @param titleCache Object for caching Title pointers. Can be mocked with get() returning null.
      * @param urlCache Object for caching Url pointers. Can be mocked with get() returning null.
-     * @throws Exception
      */
-    public ZimReader(ZimFile file, LruCache titleCache, LruCache urlCache) throws Exception {
+    public ZimReader(ZimFile file, LruCache<Integer, DirectoryEntry> titleCache, LruCache<Integer, DirectoryEntry> urlCache) {
         init(file);
-        //noinspection unchecked
         entryByTitleCache = titleCache;
-        //noinspection unchecked
         entryByUrlCache = urlCache;
     }
 
@@ -195,7 +191,7 @@ public class ZimReader implements Closeable {
         String[] urlParts = url.split("/");
         if (urlParts.length > 0 && urlParts[0].length() > 0 && url.length() > (urlParts[0].length() + 1)) {
             return getData(binarySearchByUrl(urlParts[0].charAt(0),
-                    url.substring(urlParts[0].length() + 1, url.length()), false));
+                    url.substring(urlParts[0].length() + 1), false));
         } else {
             return getData(binarySearchByUrl(NAMESPACE_ARTICLE, url, false));
         }
@@ -218,7 +214,7 @@ public class ZimReader implements Closeable {
         int clusterNumber = ((ArticleEntry) entry).getClusterNumber();
         int blobNumber = ((ArticleEntry) entry).getBlobNumber();
 
-        inputStream.seek(zimFile.getClusterPtrPos() + clusterNumber * BYTES_PER_LONG);
+        inputStream.seek(zimFile.getClusterPtrPos() + (long)clusterNumber * BYTES_PER_LONG);
 
         long clusterPos = inputStream.readLongLe();
         inputStream.seek(clusterPos);
@@ -258,7 +254,7 @@ public class ZimReader implements Closeable {
                 differenceOffset = offset2 - offset1;
                 buffer = new byte[differenceOffset];
 
-                Util.skipFully(inputStream, (offset1 - BYTES_PER_INT * (blobNumber + 2)));
+                Util.skipFully(inputStream, (offset1 - (long)BYTES_PER_INT * (blobNumber + 2)));
 
                 inputStream.read(buffer, 0, differenceOffset);
                 outStream.write(buffer, 0, differenceOffset);
@@ -294,7 +290,7 @@ public class ZimReader implements Closeable {
                 differenceOffset = offset2 - offset1;
                 buffer = new byte[differenceOffset];
 
-                Util.skipFully(xzReader, (offset1 - BYTES_PER_INT * (blobNumber + 2)));
+                Util.skipFully(xzReader, (offset1 - (long)BYTES_PER_INT * (blobNumber + 2)));
 
                 xzReader.read(buffer, 0, differenceOffset);
                 outStream.write(buffer, 0, differenceOffset);
@@ -414,7 +410,7 @@ public class ZimReader implements Closeable {
         if (entryByTitleCache.get(position) != null) {
             return entryByTitleCache.get(position);
         }
-        inputStream.seek(zimFile.getTitlePtrPos() + BYTES_PER_INT * position);
+        inputStream.seek(zimFile.getTitlePtrPos() + (long)BYTES_PER_INT * position);
         int urlPosition = inputStream.readIntLe();
         DirectoryEntry entry = getDirectoryEntryAtUrlPosition(urlPosition);
         entry.setTitleListIndex(position);
@@ -426,7 +422,7 @@ public class ZimReader implements Closeable {
         if (entryByUrlCache.get(position) != null) {
             return entryByUrlCache.get(position);
         }
-        inputStream.seek(zimFile.getUrlPtrPos() + BYTES_PER_LONG * position);
+        inputStream.seek(zimFile.getUrlPtrPos() + (long)BYTES_PER_LONG * position);
 
         // Go to the location of the directory entry
         inputStream.seek(inputStream.readLongLe());
