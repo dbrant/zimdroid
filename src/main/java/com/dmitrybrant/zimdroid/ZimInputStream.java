@@ -14,8 +14,8 @@ import java.io.IOException;
 public class ZimInputStream extends BufferedInputStream {
     private static final int TEMP_BUFFER_SIZE = 8;
 
-    private FileInputStream fileStream;
-    private byte[] buffer = new byte[TEMP_BUFFER_SIZE];
+    private final FileInputStream fileStream;
+    private final byte[] buffer = new byte[TEMP_BUFFER_SIZE];
 
     public ZimInputStream(FileInputStream fileStream) {
         super(fileStream);

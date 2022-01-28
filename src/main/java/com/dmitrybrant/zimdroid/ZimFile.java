@@ -17,7 +17,7 @@ public class ZimFile extends File {
     private static final int UUID_SIZE = 16;
 
     private int version;
-    private byte[] uuid = new byte[UUID_SIZE];
+    private final byte[] uuid = new byte[UUID_SIZE];
     private int articleCount;
     private int clusterCount;
     private long urlPtrPos;
@@ -27,7 +27,7 @@ public class ZimFile extends File {
     private int mainPage;
     private int layoutPage;
 
-    private List<String> mimeTypeList = new ArrayList<>();
+    private final List<String> mimeTypeList = new ArrayList<>();
 
     public ZimFile(String path) throws IOException {
         super(path);
