@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:7.1.0"
+        classpath "com.android.tools.build:gradle:7.1.2"
     }
 }
 
@@ -26,11 +26,11 @@ version = "${VERSION_NAME}"
 group = "${GROUP}"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
         versionName "${VERSION_NAME}"
 
