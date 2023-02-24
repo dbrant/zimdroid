@@ -26,11 +26,11 @@ version = "${VERSION_NAME}"
 group = "${GROUP}"
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "${VERSION_NAME}"
 
